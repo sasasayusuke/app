@@ -1,5 +1,5 @@
 from flaskr import app
-from flask import render_template, request, redirect, url_for, send_from_directory
+from flask import render_template, request, redirect, url_for
 import random
 import sqlite3
 MASTER_DATABASE = "master.db"
@@ -14,7 +14,13 @@ def index():
 @app.route('/master')
 def master():
     con = sqlite3.connect(MASTER_DATABASE)
-    db_images = con.execute("SELECT path, like, score FROM images;").fetchall()
+    db_images = con.execute(
+        f"SELECT
+            path,
+            like,
+            score
+        FROM images;"
+    ).fetchall()
     con.close()
     images = []
     for row in db_images:

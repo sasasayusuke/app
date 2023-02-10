@@ -1,8 +1,6 @@
 import sqlite3
 import pathlib
-import glob
-import os
-import random
+from flaskr import common
 
 MASTER_DATABASE = "master.db"
 APP_NAME = "flaskr"
@@ -18,19 +16,10 @@ def createImages():
     allFIle = []
 
     for ext in extensions:
-        allFIle.extend(getFiles(cur, ext))
+        allFIle.extend(common.getFiles(cur, ext))
     for file in allFIle:
         path = file.split(APP_NAME)[1]
         if (path not in paths):
-            con.execute(f'INSERT INTO images(path, score, like) VALUES("{path}", "100", "0")')
+            con.execute(f'INSERT INTO images(path, score, like) VALUES("{path}", "102", "0")')
     con.commit()
     con.close
-
-def getFiles(path, extension):
-    file_list = []
-    for filename in glob.glob(os.path.join(path, f'*.{extension}')):
-        file_list.append(filename)
-    for dirname in glob.glob(os.path.join(path, '*')):
-        if os.path.isdir(dirname):
-            file_list.extend(getFiles(dirname, extension))
-    return file_list
