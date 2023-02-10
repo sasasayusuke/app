@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div></div>
+    <h1>which</h1>
+
+    {% for img in images %}
+    <img id = "{{ img.id }}" src = "{{ img.path }}" class="playImage" score = "{{ img.score }}" >
+    {% endfor %}
+
+    <dialog id="exampleDialog">
+        <div id="innerDialog">
+            <form method="post" action="{{ url_for('winner') }}">
+                <input type="submit" id="okButton" value="OK" hidden>
+                <p>  winner is a <label id="winnerLabel" style="color :red"></label></p>
+                <img id="winnerImage" src="" style ="margin :120px">
+
+                <input type="text" name="session" value="{{session}}" hidden>
+                <input type="text" name="count" value="{{count}}" hidden>
+                <input id="winner" type="text" name="winner" value="" hidden>
+                <input id="winnerScore" type="text" name="winnerScore" value="" hidden>
+                {% for img in images %}
+                <input type="text" name="player{{loop.index0}}" value={{img.id}} hidden>
+                <input type="text" name="score{{loop.index0}}" value={{img.score}} hidden>
+                {% endfor %}
+            </form>
+
+        </div>
+    </dialog>
+</body>
+<script>
+    let timeOut
+
+    document.addEventListener("click", function(event) {
+        if (event.target.className == "playImage") {
+            document.getElementById("exampleDialog").showModal()
+
+            document.getElementById("winnerLabel").innerText = event.target.src
+            document.getElementById("winner").value = event.target.id
+            document.getElementById("winnerImage").src = event.target.src
+            document.getElementById("winnerScore").value = event.target.getAttribute("score")
+            timeOut = window.setTimeout(function() {
+                document.getElementById("okButton").click()
+            }, 3000)
+        } else {
+            clearTimeout(timeOut)
+            timeOut = {}
+            document.getElementById("exampleDialog").close()
+
+        }
+    });
+</script>
+<style>
+img{
+    /* 拡大するのにかかる時間 */
+    transition:all {{ transition }}s;
+    height: {{ height }}px;
+    padding: 50px;
+}
+
+img:hover{
+    /* ホバーしたら2倍サイズに拡大 */
+    transform: scale({{ scale }});
+}
+
+</style>
+
+</html>
