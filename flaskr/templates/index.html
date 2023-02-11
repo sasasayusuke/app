@@ -7,9 +7,15 @@
     <title>Document</title>
 </head>
 <body>
-    <a href="{{ url_for('master') }}">master</a>
-    <a href="{{ url_for('play', count=2) }}">play</a>
-    <input type="number" vlaue="2" >
+    <ul>
+        <li>
+            <a href="{{ url_for('master') }}">list</a>
+        </li>
+        <li>
+            <a href="{{ url_for('random', count=2) }}">random</a>
+        </li>
+    </ul>
+
 </body>
 <script src = "/static/js/common.js">
 

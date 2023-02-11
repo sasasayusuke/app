@@ -8,17 +8,15 @@
 </head>
 <body>
     <div></div>
-    <h1>which</h1>
-
     {% for img in images %}
-    <img id = "{{ img.id }}" src = "{{ img.path }}" class="playImage" score = "{{ img.score }}" >
+    <img id = "{{ img.id }}" src = "{{ img.path }}" class="randomImage" score = "{{ img.score }}" loading="eager" >
     {% endfor %}
 
     <dialog id="exampleDialog">
         <div id="innerDialog">
-            <form method="post" action="{{ url_for('winner') }}">
+            <form method="post" action="{{ url_for('send_winner') }}">
                 <input type="submit" id="okButton" value="OK" hidden>
-                <p>  winner is a <label id="winnerLabel" style="color :red"></label></p>
+                <p><label id="winnerLabel" style="color :red"></label></p>
                 <img id="winnerImage" src="" style ="margin :120px">
 
                 <input type="text" name="session" value="{{session}}" hidden>
@@ -38,7 +36,7 @@
     let timeOut
 
     document.addEventListener("click", function(event) {
-        if (event.target.className == "playImage") {
+        if (event.target.className == "randomImage") {
             document.getElementById("exampleDialog").showModal()
 
             document.getElementById("winnerLabel").innerText = event.target.src

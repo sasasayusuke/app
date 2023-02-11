@@ -1,7 +1,9 @@
 
 import glob
 import os
-
+import random
+def getRandom(n = 8):
+    return random.randint(10**(n - 1), 10**n - 1)
 
 def getFiles(path, extension):
     file_list = []

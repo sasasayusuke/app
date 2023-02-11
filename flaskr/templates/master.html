@@ -17,7 +17,7 @@
         </tr>
         {% for img in images %}
         <tr>
-            <td><img class = "masterImage" src = "{{ img.path }}" height="{{ height }}" width="{{ width }}"></td>
+            <td><img class = "masterImage" src = "{{ img.path }}" height="{{ height }}" width="{{ width }}" loading="eager"></td>
             <td>{{ img.like }}</td>
             <td>{{ img.score }}</td>
             <td><input type="checkbox"></td>
@@ -33,7 +33,7 @@
             <h1>Example Dialog</h1>
             <p>This is a <label id="dialogLabel"></label></p>
 
-            <img id="dialogImage" src="" style ="margin :50px">
+            <img id="dialogImage" src="" style ="margin :50px" loading="eager">
         </div>
     </dialog>
 </body>

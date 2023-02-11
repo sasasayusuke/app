@@ -1,9 +1,8 @@
 from flaskr import app
 from flask import render_template, request, redirect, url_for
-import random
-import sqlite3
-MASTER_DATABASE = "master.db"
-TRUN_DATABASE = "trun.db"
+
+from flaskr import common
+from flaskr import db
 
 @app.route('/')
 def index():
@@ -13,17 +12,7 @@ def index():
 
 @app.route('/master')
 def master():
-    con = sqlite3.connect(MASTER_DATABASE)
-    db_images = con.execute(
-        """
-        SELECT
-            path,
-            like,
-            score
-        FROM images;
-        """
-    ).fetchall()
-    con.close()
+    db_images = db.selectImages()
     images = []
     for row in db_images:
         images.append({
@@ -41,11 +30,10 @@ def master():
     )
 
 
-@app.route("/play/<int:count>")
-def play(count):
-    con = sqlite3.connect(MASTER_DATABASE)
-    db_images = con.execute(f"SELECT id, path, like, score FROM images ORDER BY RANDOM() LIMIT {count};").fetchall()
-    con.close()
+@app.route("/random/<int:count>")
+def random(count):
+    session = common.getRandom()
+    db_images = db.selectImagesCount(count)
     images = []
     for row in db_images:
         images.append({
@@ -55,8 +43,8 @@ def play(count):
             "score" : row[3],
         })
     return render_template(
-        'play.html',
-        session=random.randint(100000000, 999999999),
+        'random.html',
+        session=session,
         count=count,
         images=images,
         height=500,
@@ -64,22 +52,29 @@ def play(count):
         scale=1.5,
     )
 
-@app.route("/winner", methods=["POST"])
-def winner():
+@app.route("/send_winner", methods=["POST"])
+def send_winner():
+    playLogs = []
     winner = request.form["winner"]
     winner_score = request.form["winnerScore"]
     session = request.form["session"]
     count = request.form["count"]
 
-    con = sqlite3.connect(TRUN_DATABASE)
     i = 0
     while (f"player{i}") in request.form:
         loser = request.form[f"player{i}"]
         loser_score = request.form[f"score{i}"]
-        if (request.form["winner"] != request.form[f"player{i}"]):
-            con.execute(f'INSERT INTO playLog(id, player_count, winner, loser, winner_score, loser_score) VALUES("{session}", "{count}", "{winner}", "{loser}", "{winner_score}", "{loser_score}")')
-        i += 1
 
-    con.commit()
-    con.close()
-    return redirect(url_for("play", count=count))
+        if (request.form["winner"] != request.form[f"player{i}"]):
+            playLogs.append({
+                "session" : session,
+                "count" : count,
+                "winner" : winner,
+                "loser" : loser,
+                "winner_score" : winner_score,
+                "loser_score" : loser_score,
+            })
+        i += 1
+    db.insertPlayLogs(playLogs)
+
+    return redirect(url_for("random", count=count))
