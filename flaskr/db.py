@@ -1,9 +1,6 @@
 import sqlite3
 import pathlib
-from flaskr import common
-
-APP_NAME = "flaskr"
-PATH = "static/img/i_ver1"
+from flaskr import common, setting
 
 MASTER_DATABASE = "master.db"
 TRUN_DATABASE = "trun.db"
@@ -14,15 +11,15 @@ def insertImages():
     paths = [item[0] for item in db_paths]
 
     extensions = ["png", "jpg", "jpeg", "webp", "gif", "jfif"]
-    cur = pathlib.Path.joinpath(pathlib.Path(__file__).parent, PATH)
+    cur = pathlib.Path.joinpath(pathlib.Path(__file__).parent, setting.PATH)
     allFIle = []
 
     for ext in extensions:
         allFIle.extend(common.getFiles(cur, ext))
     for file in allFIle:
-        path = file.split(APP_NAME)[1]
+        path = file.split(setting.APPNAME)[1]
         if (path not in paths):
-            con.execute(f'INSERT INTO images(path, score, like) VALUES("{path}", "102", "0")')
+            con.execute(f'INSERT INTO images(path, score, like) VALUES("{path}", "99", "0")')
     con.commit()
     con.close
 
@@ -57,7 +54,8 @@ def selectImages():
             path,
             like,
             score
-        FROM images;
+        FROM images
+        ORDER BY score desc
     """).fetchall()
     con.close()
     return db_images
@@ -71,7 +69,7 @@ def selectImagesCount(count):
             like,
             score
         FROM images
-        ORDER BY RANDOM() LIMIT {count};
+        ORDER BY RANDOM() LIMIT {count}
     """).fetchall()
     con.close()
     return db_images

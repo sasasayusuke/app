@@ -1,17 +1,18 @@
-from flaskr import app
+from flaskr import app, db, common, setting
 from flask import render_template, request, redirect, url_for
-
-from flaskr import common
-from flaskr import db
 
 @app.route('/')
 def index():
     return render_template(
-        'index.html',
+        f'{setting.PAGE_INDEX}.html',
+        allowed=setting.ALLOWED,
     )
 
-@app.route('/master')
+@app.route(f'/{setting.PAGE_MASTER}')
 def master():
+    allow = setting.ALLOWED[setting.PAGE_MASTER]
+    if not allow:
+        raise ValueError("NOT ALLOWED")
     db_images = db.selectImages()
     images = []
     for row in db_images:
@@ -21,7 +22,8 @@ def master():
             "score" : row[2],
         })
     return render_template(
-        'master.html',
+        f'{setting.PAGE_MASTER}.html',
+        allowed=setting.ALLOWED,
         images=images,
         height=320,
         width=400,
@@ -30,8 +32,11 @@ def master():
     )
 
 
-@app.route("/random/<int:count>")
+@app.route(f"/{setting.PAGE_RANDOM}/<int:count>")
 def random(count):
+    allow = setting.ALLOWED[setting.PAGE_RANDOM]
+    if not allow:
+        raise ValueError("NOT ALLOWED")
     session = common.getRandom()
     db_images = db.selectImagesCount(count)
     images = []
@@ -43,13 +48,22 @@ def random(count):
             "score" : row[3],
         })
     return render_template(
-        'random.html',
-        session=session,
+        f'{setting.PAGE_RANDOM}.html',
+        allowed=setting.ALLOWED,
         count=count,
+        session=session,
         images=images,
         height=500,
         transition=0.5,
         scale=1.5,
+    )
+
+@app.route(f'/{setting.PAGE_SEARCH_ILLUST}')
+def search_illust():
+
+    return render_template(
+        f'{setting.PAGE_SEARCH_ILLUST}.html',
+        allowed=setting.ALLOWED,
     )
 
 @app.route("/send_winner", methods=["POST"])
@@ -78,3 +92,11 @@ def send_winner():
     db.insertPlayLogs(playLogs)
 
     return redirect(url_for("random", count=count))
+
+@app.route("/open_illust", methods=["POST"])
+def open_illust():
+    text = request.form["text"]
+    for url in setting.ILLUST_URLS:
+        common.openSubprocess(url + text)
+
+    return redirect(url_for("search_illust"))

@@ -7,14 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    <ul>
-        <li>
-            <a href="{{ url_for('master') }}">list</a>
-        </li>
-        <li>
-            <a href="{{ url_for('random', count=2) }}">random</a>
-        </li>
-    </ul>
+
+    {% import 'parts.html' as parts %}
+    <p>{{ parts.render_index(allowed) }}</p>
 
 </body>
 <script src = "/static/js/common.js">

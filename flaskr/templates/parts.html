@@ -1,0 +1,31 @@
+{% macro render_index(allowed) -%}
+    <ul>
+        {% if allowed["index"] %}
+        <li>
+            <a href="{{ url_for('index') }}">index</a>
+        </li>
+        {% endif %}
+        {% if allowed["master"] %}
+        <li>
+            <a href="{{ url_for('master') }}">master</a>
+        </li>
+        {% endif %}
+        {% if allowed["random"] %}
+        <li>
+            <a href="{{ url_for('random', count=2) }}">random</a>
+        </li>
+        {% endif %}
+        {% if allowed["search_illust"] %}
+        <li>
+            <a href="{{ url_for('search_illust') }}">search_illust</a>
+        </li>
+        {% endif %}
+    </ul>
+{%- endmacro %}
+
+{% macro render_search(endpoint) -%}
+    <form method="post" action="{{ url_for(endpoint) }}">
+        <input type="text" name="text" value="{{text}}">
+        <input type="submit" id="search" value="search">
+    </form>
+{%- endmacro %}
