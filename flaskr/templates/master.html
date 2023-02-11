@@ -9,49 +9,15 @@
 </head>
 <body>
     {% import 'parts.html' as parts %}
-    <p>{{ parts.render_index(allowed) }}</p>
-    <table border="1">
-        <tr>
-            <th style="position: sticky; top: 0; background-color: lightcyan;">たいとる</th>
-            <th style="position: sticky; top: 0; background-color: lightcyan;">らいく</th>
-            <th style="position: sticky; top: 0; background-color: lightcyan;">すこあ</th>
-            <th style="position: sticky; top: 0; background-color: lightcyan;">みえる</th>
-        </tr>
-        {% for img in images %}
-        <tr>
-            <td><img class = "masterImage" src = "{{ img.path }}" height="{{ height }}" width="{{ width }}" loading="eager"></td>
-            <td>{{ img.like }}</td>
-            <td>{{ img.score }}</td>
-            <td><input type="checkbox"></td>
-        </tr>
-        {% endfor %}
+    <p>{{ parts.render_index(page, allowed) }}</p>
 
-    </table>
-    <dialog id="exampleDialog">
-        <div id="innerDialog">
-            <div  style="text-align: right;">
-                <button id="closeDialogButton">Close</button>
-            </div>
-            <h1>Example Dialog</h1>
-            <p>This is a <label id="dialogLabel"></label></p>
+    <p>{{ parts.render_search("master", text) }}</p>
 
-            <img id="dialogImage" src="" style ="margin :50px" loading="eager">
-        </div>
-    </dialog>
-</body>
-<script>
-    document.addEventListener("click", function(event) {
-        if (event.target.className == "masterImage") {
-            document.getElementById("dialogLabel").innerText = event.target.src
-            document.getElementById("dialogImage").src = event.target.src
-            document.getElementById("exampleDialog").showModal()
-        } else if (event.target.id == "closeDialogButton") {
-            document.getElementById("exampleDialog").close()
-        } else if (!document.getElementById("innerDialog").contains(event.target)) {
-            document.getElementById("exampleDialog").close()
-        }
-    });
-</script>
+    {% for img in images %}
+    <img class = "masterImage" src = "{{ img.path }}" height="{{ height }}" width="{{ width }}" loading="eager">
+    {% endfor %}
+
+    {{ parts.render_dialog("masterImage") }}
 <style>
     td {
         /* 拡大してはみ出した部分を非表示にする */

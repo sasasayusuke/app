@@ -9,7 +9,7 @@
 </head>
 <body>
     {% import 'parts.html' as parts %}
-    <p>{{ parts.render_index(allowed) }}</p>
+    <p>{{ parts.render_index(page, allowed) }}</p>
 
     {% for img in images %}
     <img id = "{{ img.id }}" src = "{{ img.path }}" class="randomImage" score = "{{ img.score }}" loading="eager" >

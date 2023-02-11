@@ -6,34 +6,72 @@ def index():
     return render_template(
         f'{setting.PAGE_INDEX}.html',
         allowed=setting.ALLOWED,
+        page=setting.PAGE,
     )
 
-@app.route(f'/{setting.PAGE_MASTER}')
+@app.route(f'/{setting.PAGE_MASTER}', methods=["GET", "POST"])
 def master():
     allow = setting.ALLOWED[setting.PAGE_MASTER]
     if not allow:
         raise ValueError("NOT ALLOWED")
-    db_images = db.selectImages()
+    if request.method == "POST":
+        text = request.form["text"] if "text" in request.form  else ""
+    else:
+        text = ""
+    db_images = db.selectImages(text)
     images = []
     for row in db_images:
         images.append({
             "path" : row[0],
             "like" : row[1],
             "score" : row[2],
+            "message" : row[3],
         })
     return render_template(
         f'{setting.PAGE_MASTER}.html',
         allowed=setting.ALLOWED,
+        page=setting.PAGE,
+        text=text,
         images=images,
         height=320,
         width=400,
         transition=0.5,
-        scale=1.75,
+        scale=1.25,
     )
 
+@app.route(f'/{setting.PAGE_LIST}', methods=["GET", "POST"])
+def list():
+    allow = setting.ALLOWED[setting.PAGE_LIST]
+    if not allow:
+        raise ValueError("NOT ALLOWED")
+    if request.method == "POST":
+        text = request.form["text"] if "text" in request.form  else ""
+    else:
+        text = ""
+    db_images = db.selectImages(text)
+    images = []
+    for row in db_images:
+        images.append({
+            "path" : row[0],
+            "like" : row[1],
+            "score" : row[2],
+            "message" : row[3],
+        })
+    return render_template(
+        f'{setting.PAGE_LIST}.html',
+        allowed=setting.ALLOWED,
+        page=setting.PAGE,
+        text=text,
+        images=images,
+        height=320,
+        width=400,
+        transition=0.5,
+        scale=1.65,
+    )
 
+@app.route(f"/{setting.PAGE_RANDOM}")
 @app.route(f"/{setting.PAGE_RANDOM}/<int:count>")
-def random(count):
+def random(count=2):
     allow = setting.ALLOWED[setting.PAGE_RANDOM]
     if not allow:
         raise ValueError("NOT ALLOWED")
@@ -50,6 +88,7 @@ def random(count):
     return render_template(
         f'{setting.PAGE_RANDOM}.html',
         allowed=setting.ALLOWED,
+        page=setting.PAGE,
         count=count,
         session=session,
         images=images,
@@ -64,6 +103,31 @@ def search_illust():
     return render_template(
         f'{setting.PAGE_SEARCH_ILLUST}.html',
         allowed=setting.ALLOWED,
+        page=setting.PAGE,
+    )
+
+
+@app.route(f'/{setting.PAGE_EXTRACT_IMAGE}', methods=["GET", "POST"])
+def extract_image():
+    allow = setting.ALLOWED[setting.PAGE_EXTRACT_IMAGE]
+    if not allow:
+        raise ValueError("NOT ALLOWED")
+
+    images = []
+    if request.method == "POST":
+        text = request.form["text"] if "text" in request.form  else ""
+        images = common.requestImg(text)
+    else:
+        text = ""
+
+    return render_template(
+        f'{setting.PAGE_EXTRACT_IMAGE}.html',
+        allowed=setting.ALLOWED,
+        page=setting.PAGE,
+        text=text,
+        images=images,
+        transition=0.5,
+        scale=1.65,
     )
 
 @app.route("/send_winner", methods=["POST"])

@@ -11,7 +11,35 @@
     {% import 'parts.html' as parts %}
     <p>{{ parts.render_index(page, allowed) }}</p>
 
-    <p>{{ parts.render_search("open_illust", text) }}</p>
+    <p>{{ parts.render_search("extract_image", text) }}</p>
+
+    <table border="1">
+        {% if title in images %}
+            <tr>
+                <th style="position: sticky; top: 0; background-color: lightcyan;">{{ images.title }}</th>
+                <th style="position: sticky; top: 0; background-color: lightcyan;">らいく</th>
+            </tr>
+        {% endif %}
+
+        {% for img in images.src %}
+            <tr>
+                <td><img class = "masterImage" src = "{{ img['src'] }}" loading="eager"></td>
+                <td><img class = "masterImage" src = "{{ img['data-src'] }}" loading="eager"></td>
+            </tr>
+        {% endfor %}
+
+    </table>
+    <dialog id="exampleDialog">
+        <div id="innerDialog">
+            <div  style="text-align: right;">
+                <button id="closeDialogButton">Close</button>
+            </div>
+            <h1>Example Dialog</h1>
+            <p>This is a <label id="dialogLabel"></label></p>
+
+            <img id="dialogImage" src="" style ="margin :50px" loading="eager">
+        </div>
+    </dialog>
 </body>
 <script>
     document.addEventListener("click", function(event) {

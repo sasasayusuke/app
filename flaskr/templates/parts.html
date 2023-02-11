@@ -1,31 +1,65 @@
-{% macro render_index(allowed) -%}
+{% macro render_index(page, allowed) -%}
     <ul>
-        {% if allowed["index"] %}
-        <li>
-            <a href="{{ url_for('index') }}">index</a>
-        </li>
-        {% endif %}
-        {% if allowed["master"] %}
-        <li>
-            <a href="{{ url_for('master') }}">master</a>
-        </li>
-        {% endif %}
-        {% if allowed["random"] %}
-        <li>
-            <a href="{{ url_for('random', count=2) }}">random</a>
-        </li>
-        {% endif %}
-        {% if allowed["search_illust"] %}
-        <li>
-            <a href="{{ url_for('search_illust') }}">search_illust</a>
-        </li>
-        {% endif %}
+        {% for p in page %}
+            {% if allowed[p] %}
+                <li>
+                    <a href="{{ url_for(p) }}">{{ p }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
     </ul>
 {%- endmacro %}
 
-{% macro render_search(endpoint) -%}
+{% macro render_search(endpoint, text) -%}
+    {% if text != "" %}
+        <label>search result : {{ text }}</label>
+    {% endif %}
     <form method="post" action="{{ url_for(endpoint) }}">
         <input type="text" name="text" value="{{text}}">
         <input type="submit" id="search" value="search">
     </form>
+{%- endmacro %}
+
+
+{% macro render_dialog(className) -%}
+    <dialog id="exampleDialog">
+        <div id="innerDialog">
+            <table border="1">
+                <div  style="text-align: right;">
+                    <button id="closeDialogButton">Close</button>
+                </div>
+                <h1>Example Dialog</h1>
+                <p>This is a <label id="dialogLabel"></label></p>
+
+                <tr>
+                    <td>絶対パス</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>らいく</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>メッセージ</td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <img id="dialogImage" src="" style ="margin :50px" loading="eager">
+        </div>
+    </dialog>
+    </body>
+    <script>
+        document.addEventListener("click", function(event) {
+            if (event.target.className == "{{ className }}") {
+                document.getElementById("dialogLabel").innerText = event.target.src
+                document.getElementById("dialogImage").src = event.target.src
+                document.getElementById("exampleDialog").showModal()
+            } else if (event.target.id == "closeDialogButton") {
+                document.getElementById("exampleDialog").close()
+            } else if (!document.getElementById("innerDialog").contains(event.target)) {
+                document.getElementById("exampleDialog").close()
+            }
+        });
+    </script>
 {%- endmacro %}

@@ -13,7 +13,7 @@ def createImages():
             images (
                 id integer primary key autoincrement,
                 path,
-                `like` int,
+                ``like`` int,
                 score int,
                 message text
             )
@@ -60,7 +60,7 @@ def insertImages():
                     images(
                         path,
                         score,
-                        like
+                        `like`
                     ) VALUES (
                         "{path}",
                         "99",
@@ -94,14 +94,20 @@ def insertPlayLogs(playLogs):
     con.commit()
     con.close
 
-def selectImages():
+def selectImages(pattern = ""):
     con = sqlite3.connect(MASTER_DATABASE)
-    db_images = con.execute("""
+    db_images = con.execute(f"""
         SELECT
             path,
-            like,
-            score
+            `like`,
+            score,
+            message
         FROM images
+        WHERE
+            id  LIKE '%{pattern}%'
+            OR path  LIKE '%{pattern}%'
+            OR `like`  LIKE '%{pattern}%'
+            OR score  LIKE '%{pattern}%'
         ORDER BY score desc
     """).fetchall()
     con.close()
@@ -113,7 +119,7 @@ def selectImagesCount(count):
         SELECT
             id,
             path,
-            like,
+            `like`,
             score
         FROM images
         ORDER BY RANDOM() LIMIT {count}
