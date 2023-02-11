@@ -15,11 +15,13 @@ def index():
 def master():
     con = sqlite3.connect(MASTER_DATABASE)
     db_images = con.execute(
-        f"SELECT
+        """
+        SELECT
             path,
             like,
             score
-        FROM images;"
+        FROM images;
+        """
     ).fetchall()
     con.close()
     images = []
