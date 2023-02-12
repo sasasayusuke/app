@@ -117,15 +117,29 @@ def extract_image():
     if request.method == "POST":
         text = request.form["text"] if "text" in request.form  else ""
         images = common.requestImg(text)
+        db.insertUrl(text, images["title"])
+        db.insertSrcs(text, images["src"])
     else:
         text = ""
+
+    srcs = []
+    db_srcs = db.selectSrcs()
+    for row in db_srcs:
+        srcs.append({
+            "id" : row[0],
+            "url" : row[1],
+            "src" : row[2],
+            "datasrc" : row[3],
+            "srcset" : row[4],
+            "alt" : row[5],
+        })
 
     return render_template(
         f'{setting.PAGE_EXTRACT_IMAGE}.html',
         allowed=setting.ALLOWED,
         page=setting.PAGE,
         text=text,
-        images=images,
+        srcs=srcs,
         transition=0.5,
         scale=1.65,
     )

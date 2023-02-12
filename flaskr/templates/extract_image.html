@@ -14,46 +14,24 @@
     <p>{{ parts.render_search("extract_image", text) }}</p>
 
     <table border="1">
-        {% if title in images %}
+        <!-- {% if title in srcs %}
             <tr>
-                <th style="position: sticky; top: 0; background-color: lightcyan;">{{ images.title }}</th>
+                <th style="position: sticky; top: 0; background-color: lightcyan;">{{ srcs.title }}</th>
                 <th style="position: sticky; top: 0; background-color: lightcyan;">らいく</th>
             </tr>
-        {% endif %}
+        {% endif %} -->
 
-        {% for img in images.src %}
+        {% for src in srcs %}
             <tr>
-                <td><img class = "masterImage" src = "{{ img['src'] }}" loading="eager"></td>
-                <td><img class = "masterImage" src = "{{ img['data-src'] }}" loading="eager"></td>
+                <td><img class = "masterImage" src = "{{ src.src }}" loading="eager"></td>
+                <td><input type="checkbox"></td>
             </tr>
         {% endfor %}
 
     </table>
-    <dialog id="exampleDialog">
-        <div id="innerDialog">
-            <div  style="text-align: right;">
-                <button id="closeDialogButton">Close</button>
-            </div>
-            <h1>Example Dialog</h1>
-            <p>This is a <label id="dialogLabel"></label></p>
+    {{ parts.render_dialog("masterImage") }}
 
-            <img id="dialogImage" src="" style ="margin :50px" loading="eager">
-        </div>
-    </dialog>
 </body>
-<script>
-    document.addEventListener("click", function(event) {
-        if (event.target.className == "masterImage") {
-            document.getElementById("dialogLabel").innerText = event.target.src
-            document.getElementById("dialogImage").src = event.target.src
-            document.getElementById("exampleDialog").showModal()
-        } else if (event.target.id == "closeDialogButton") {
-            document.getElementById("exampleDialog").close()
-        } else if (!document.getElementById("innerDialog").contains(event.target)) {
-            document.getElementById("exampleDialog").close()
-        }
-    });
-</script>
 <style>
     td {
         /* 拡大してはみ出した部分を非表示にする */

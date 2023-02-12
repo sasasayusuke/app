@@ -30,31 +30,9 @@
         {% endfor %}
 
     </table>
-    <dialog id="exampleDialog">
-        <div id="innerDialog">
-            <div  style="text-align: right;">
-                <button id="closeDialogButton">Close</button>
-            </div>
-            <h1>Example Dialog</h1>
-            <p>This is a <label id="dialogLabel"></label></p>
+    {{ parts.render_dialog("masterImage") }}
 
-            <img id="dialogImage" src="" style ="margin :50px" loading="eager">
-        </div>
-    </dialog>
 </body>
-<script>
-    document.addEventListener("click", function(event) {
-        if (event.target.className == "masterImage") {
-            document.getElementById("dialogLabel").innerText = event.target.src
-            document.getElementById("dialogImage").src = event.target.src
-            document.getElementById("exampleDialog").showModal()
-        } else if (event.target.id == "closeDialogButton") {
-            document.getElementById("exampleDialog").close()
-        } else if (!document.getElementById("innerDialog").contains(event.target)) {
-            document.getElementById("exampleDialog").close()
-        }
-    });
-</script>
 <style>
     td {
         /* 拡大してはみ出した部分を非表示にする */

@@ -13,13 +13,44 @@ def createImages():
             images (
                 id integer primary key autoincrement,
                 path,
-                ``like`` int,
+                `like` int,
                 score int,
                 message text
             )
     """)
     con.commit()
-    con.close
+    con.close()
+
+def createUrls():
+    con = sqlite3.connect(MASTER_DATABASE)
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS
+            urls (
+                id integer primary key autoincrement,
+                url unique,
+                title
+                delete_flg boolean
+            );
+    """)
+    con.commit()
+    con.close()
+
+def createSrcs():
+    con = sqlite3.connect(MASTER_DATABASE)
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS
+            srcs (
+                id integer primary key autoincrement,
+                url,
+                src,
+                datasrc,
+                srcset,
+                alt text,
+                delete_flg boolean
+            );
+    """)
+    con.commit()
+    con.close()
 
 def createPlayLog():
     con = sqlite3.connect(TRUN_DATABASE)
@@ -35,7 +66,44 @@ def createPlayLog():
             )
     """)
     con.commit()
-    con.close
+    con.close()
+
+
+def insertUrl(url, title):
+    with sqlite3.connect(MASTER_DATABASE) as con:
+        con.execute(f"""
+            INSERT INTO
+                urls(
+                    url,
+                    title
+                ) VALUES (
+                    "{url}",
+                    "{title}"
+                );
+        """)
+        con.commit()
+
+
+def insertSrcs(url, srcs):
+    with sqlite3.connect(MASTER_DATABASE) as con:
+        for src in srcs:
+            con.execute(f"""
+                INSERT INTO
+                    srcs(
+                        url,
+                        src,
+                        datasrc,
+                        srcset,
+                        alt
+                    ) VALUES (
+                        "{url}",
+                        '{ src["src"] if "src" in src else ""}',
+                        '{ src["data-src"] if "data-src" in src else ""}',
+                        '{ src["srcset"] if "srcset" in src else ""}',
+                        '{ src["alt"] if "alt" in src else ""}'
+                    );
+            """)
+        con.commit()
 
 def insertImages():
     con = sqlite3.connect(MASTER_DATABASE)
@@ -68,7 +136,7 @@ def insertImages():
                     )
             """)
     con.commit()
-    con.close
+    con.close()
 
 def insertPlayLogs(playLogs):
 
@@ -92,7 +160,7 @@ def insertPlayLogs(playLogs):
                     "{log['loser_score']}")
         """)
     con.commit()
-    con.close
+    con.close()
 
 def selectImages(pattern = ""):
     con = sqlite3.connect(MASTER_DATABASE)
@@ -112,6 +180,22 @@ def selectImages(pattern = ""):
     """).fetchall()
     con.close()
     return db_images
+
+def selectSrcs():
+    con = sqlite3.connect(MASTER_DATABASE)
+    db_srcs = con.execute(f"""
+        SELECT
+            id,
+            url,
+            src,
+            datasrc,
+            srcset,
+            alt
+        FROM srcs
+        ORDER BY id desc
+    """).fetchall()
+    con.close()
+    return db_srcs
 
 def selectImagesCount(count):
     con = sqlite3.connect(MASTER_DATABASE)

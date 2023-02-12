@@ -4,5 +4,8 @@ import flaskr.main
 from flaskr import db
 
 db.createImages()
-db.insertImages()
+db.createUrls()
+db.createSrcs()
 db.createPlayLog()
+
+db.insertImages()
